@@ -1,56 +1,22 @@
-# arch-boxes
+# Crystal Arch Linux Base
 
-Arch-boxes provides automated builds of the Arch Linux releases for
-different providers and post-processors. Check the providers or post-processor sections if you want to know
-which are currently supported.
+My fork to build a vanila minimalistic Arch Linux vagrant box. It is based on
+newly available official box at
+[archlinux/arch-boxes](https://github.com/archlinux/arch-boxes). Detailed
+instructions can be found there.
 
-## Dependencies
+## Main differences
 
-You'll need the following dependencies:
+* Only virtualbox-iso build. All qmeu/kvm builder files are untouched.
+* No Polkit.
+* Change the root filesystem from btrfs to xfs.
+* Mirrorlist are fixed instead of `rankmirrors`, which takes unnecessarily long time.
+* ISO are downloaded separately (a result of poor network), and iso_url refers
+  to local file.
 
-* packer (for basic usage)
-* vagrant (for vagrant images)
-* qemu (for libvirt provider support)
-* virtualbox (for virtualbox support)
+## Building
 
-## How to start the build process
-
-On Arch Linux:
-
-`packer-io build vagrant.json`
-
-On any other System:
-
-`packer build vagrant.json`
-
-**Note:** this is because of the name conflict with the AUR-Helpertool
-`packer` on Arch linux.
-
-## providers
-
-* virtualbox-iso
-* qemu/libvirt
-
-## post-processors
-
-* vagrant
-
-## Troubleshooting
-
-### Parallel build fails
-If the parallel build fails this is mostly because the KVM device is
-already occupied by a different provider. You can use the build option
-`parallel=false` for building the images in a queue instead of parallel.
-But don't be surprised that that the build process will take longer. Any
-other option is to disable KVM support for all other providers except
-one.
-
-Start `packer` with `-parallel=false`:
-
-On Arch Linux:
-
-`packer-io build -parallel=false vagrant.json`
-
-On any other system:
-
-`packer build -parallel=false vagrant.json`
+1. Change mirror server in install.sh.
+2. Download the ISO and placed in the ./packer_cache
+3. Follow steps of original building steps.
+4. Only build virtualbox box: `packer build --only=virtualbox-iso vagrant.json`
